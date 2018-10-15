@@ -27,10 +27,11 @@ hs_err_pid*
 **/target/**
 
 # ignore eclipse files
-.project
-.classpath
-.settings
-.metadata
+*.project
+*.classpath
+*.settings/*
+.settings/
+*.metadata
 
 #.gitignore for java
 *.class
