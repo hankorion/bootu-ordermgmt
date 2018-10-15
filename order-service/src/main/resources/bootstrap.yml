@@ -7,7 +7,20 @@ spring:
         enabled: true
         service-id: BOOTU-CONFIG
       profile: dev
+    stream:
+      bindings:
+        DurainBootuOrderMessageOutput:
+#          group: DurainBootuOrderGroup
+          destination: DurainBootuOrder
+        DurainBootuOrderMessageInput:
+#          group: DurainBootuOrderGroup
+          destination: DurainBootuOrder
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:8861/eureka/
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
