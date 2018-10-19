@@ -3,20 +3,23 @@ package com.durain.bootu.ordermgmt.order.service.service.impl;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.durain.bootu.ordermgmt.order.service.dataobject.OrderDetails;
 import com.durain.bootu.ordermgmt.order.service.dataobject.OrderMaster;
-import com.durain.bootu.ordermgmt.order.service.dto.CartDTO;
 import com.durain.bootu.ordermgmt.order.service.dto.OrderDTO;
 import com.durain.bootu.ordermgmt.order.service.enums.OrderStatusEnum;
 import com.durain.bootu.ordermgmt.order.service.enums.PayStatusEnum;
+import com.durain.bootu.ordermgmt.order.service.enums.ResultEnum;
+import com.durain.bootu.ordermgmt.order.service.exception.OrderException;
 import com.durain.bootu.ordermgmt.order.service.repository.OrderDetailsRepository;
 import com.durain.bootu.ordermgmt.order.service.repository.OrderMasterRepository;
 import com.durain.bootu.ordermgmt.order.service.service.OrderService;
@@ -70,7 +73,8 @@ public class OrderServiceImpl implements OrderService {
 		}
 
 		List<GameDescreaseStockRequest> cardDTOList = orderDto.getOrderDetailsList().stream()
-				.map(e -> new GameDescreaseStockRequest(e.getProductId(), e.getProductQuantity())).collect(Collectors.toList());
+				.map(e -> new GameDescreaseStockRequest(e.getProductId(), e.getProductQuantity()))
+				.collect(Collectors.toList());
 		gameServiceClient.decreaseGameStock(cardDTOList);
 		orderDto.setOrderId(orderId);
 
@@ -80,6 +84,34 @@ public class OrderServiceImpl implements OrderService {
 		orderMaster.setOrderStatus(OrderStatusEnum.NEW.getCode());
 		orderMaster.setPayStatus(PayStatusEnum.NEW.getCode());
 		orderMasterRepository.save(orderMaster);
+
+		return orderDto;
+	}
+
+	@Override
+	@Transactional
+	public OrderDTO completeOrder(String orderId) {
+		Optional<OrderMaster> orderMasterOptional = orderMasterRepository.findById(orderId);
+		if (!orderMasterOptional.isPresent()) {
+			throw new OrderException(ResultEnum.ORDER_NOT_FOUND);
+		}
+
+		OrderMaster orderMaster = orderMasterOptional.get();
+		if (orderMaster.getOrderStatus() != OrderStatusEnum.NEW.getCode()) {
+			throw new OrderException(ResultEnum.ORDER_STATUS_ERROR);
+		}
+
+		orderMaster.setOrderStatus(OrderStatusEnum.COMPLETED.getCode());
+		orderMasterRepository.save(orderMaster);
+
+		List<OrderDetails> orderDtlsList = orderDetailsRepository.findByOrderId(orderId);
+		if (CollectionUtils.isEmpty(orderDtlsList)) {
+			throw new OrderException(ResultEnum.ORDER_DETAILS_NOT_FOUND);
+		}
+
+		OrderDTO orderDto = new OrderDTO();
+		BeanUtils.copyProperties(orderMaster, orderDto);
+		orderDto.setOrderDetailsList(orderDtlsList);
 
 		return orderDto;
 	}
