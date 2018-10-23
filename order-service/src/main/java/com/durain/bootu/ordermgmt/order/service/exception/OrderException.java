@@ -2,6 +2,7 @@ package com.durain.bootu.ordermgmt.order.service.exception;
 
 import com.durain.bootu.ordermgmt.order.service.enums.ResultEnum;
 
+
 public class OrderException extends RuntimeException {
 
 	private static final long serialVersionUID = -2556146223563820640L;
