@@ -8,10 +8,10 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import com.durain.bootu.ordermgmt.order.service.dataobject.OrderDetails;
 import com.durain.bootu.ordermgmt.order.service.dataobject.OrderMaster;
