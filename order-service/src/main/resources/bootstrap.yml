@@ -42,8 +42,8 @@ management:
     servlet:
       context-path: /
 feign:
-  hystrix:
-    enabled: true
+ hystrix:
+   enabled: true
 logging:
   level:
     org.springframework.cloud.netflix.feign: debug

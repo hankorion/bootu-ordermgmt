@@ -8,8 +8,8 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 
 
-//@SpringBootApplication
-//@EnableDiscoveryClient
+// @SpringBootApplication
+// @EnableDiscoveryClient
 //@EnableCircuitBreaker
 @EnableEurekaClient
 @EnableFeignClients(basePackages = "com.durain.bootu.product.game.client")
