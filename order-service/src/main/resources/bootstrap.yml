@@ -21,6 +21,12 @@ spring:
     enabled: true
     sampler:
       probability: 1.0
+grpc:
+  client:
+    durain-games:
+      enableKeepAlive: true
+      keepAliveWithoutCalls: true
+      negotiationType: plaintext
 eureka:
   client:
     service-url:
